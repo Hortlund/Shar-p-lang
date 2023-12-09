@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sharklang", "Sharklang\Sharklang.csproj", "{D08ACB23-F7A1-4E46-B950-0D751C8E1174}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sharklang.Core", "Sharklang\Sharklang.Core.csproj", "{D08ACB23-F7A1-4E46-B950-0D751C8E1174}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sharklang.CLI", "Sharklang.CLI\Sharklang.CLI.csproj", "{17077D2D-0D21-42A5-8BEC-6EF3E44ACB77}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sharklang.Tests", "Sharklang.Tests\Sharklang.Tests.csproj", "{51EDFCC9-5907-4088-951B-F07891AA36AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{D08ACB23-F7A1-4E46-B950-0D751C8E1174}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D08ACB23-F7A1-4E46-B950-0D751C8E1174}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D08ACB23-F7A1-4E46-B950-0D751C8E1174}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17077D2D-0D21-42A5-8BEC-6EF3E44ACB77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17077D2D-0D21-42A5-8BEC-6EF3E44ACB77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17077D2D-0D21-42A5-8BEC-6EF3E44ACB77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17077D2D-0D21-42A5-8BEC-6EF3E44ACB77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51EDFCC9-5907-4088-951B-F07891AA36AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51EDFCC9-5907-4088-951B-F07891AA36AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51EDFCC9-5907-4088-951B-F07891AA36AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51EDFCC9-5907-4088-951B-F07891AA36AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
