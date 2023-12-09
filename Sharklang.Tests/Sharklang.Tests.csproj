@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sharklang\Sharklang.Core.csproj" />
+    <ProjectReference Include="..\Sharklang.Core\Sharklang.Core.csproj" />
   </ItemGroup>
 
 </Project>
