@@ -47,6 +47,12 @@ namespace Sharklang.Core
 
         private char _ch;
 
+        private readonly Dictionary<string, TokenType> _keywords = new()
+        {
+            { "fn", TokenType.FUNCTION },
+            { "let", TokenType.LET }
+        };
+
         public Lexer(string input)
         {
             _input = input;
@@ -71,6 +77,8 @@ namespace Sharklang.Core
         public Token NextToken()
         {
             Token tok;
+
+            SkipWhiteSpace();
 
             switch(_ch)
             {
@@ -102,14 +110,70 @@ namespace Sharklang.Core
                     tok = new Token(TokenType.EOF, "");
                     break;
                 default:
+                    if (IsLetter(_ch))
+                    {
+                        var ident = ReadIdentifier();
+                        var type = LookupIdent(ident);
+                        tok = new Token(type, ident);
+                        return tok;
+                    }
+                    if (IsDigit(_ch))
+                    {
+                        var literal = ReadNumber();
+                        tok = new Token(TokenType.INT, literal);
+                        return tok;
+
+                    }
+
                     tok = new Token(TokenType.Illegal, _ch);
                     break;
-
             }
 
             ReadChar();
-            return tok;
-             
+            return tok;    
+        }
+
+        private TokenType LookupIdent(string ident)
+        {
+            if (_keywords.ContainsKey(ident))
+            {
+                return _keywords[ident];
+            }
+            else
+            {
+                return TokenType.IDENT;
+            }
+        }
+
+        private string ReadIdentifier()
+        {
+            var position = _position;
+            while (IsLetter(_ch))
+            {
+                ReadChar();
+            }
+            return _input.Substring(position, _position - position);
+        }
+
+        private string ReadNumber()
+        {
+            var position = _position;
+            while (IsDigit(_ch))
+            {
+                ReadChar();
+            }
+            return _input.Substring(position, _position - position);
+        }
+
+        private static bool IsLetter(char ch) => ch is >= 'a' and <= 'z' or >= 'A' and <= 'Z' or '_';
+        private static bool IsDigit(char ch) => ch is >= '0' and <= '9';
+
+        private void SkipWhiteSpace()
+        {
+            while (_ch is ' ' or '\t' or '\n' or '\r')
+            {
+                ReadChar();
+            }
         }
     }
 }
