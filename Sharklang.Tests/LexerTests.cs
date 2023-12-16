@@ -13,35 +13,36 @@ namespace Sharklang.Tests
         [SetUp]
         public void Setup()
         {
+
             _input = @"
 
-            let five = 5;
-            let ten = 10;
-            
-            let add = fn(x,y) {
+            låt five vara 5;
+            låt ten vara 10;
+
+            låt add vara fn(x,y) {
                 x + y;
             };
 
-            let result = add(five, ten);
+            låt result vara add(five, ten);
 
             ";
 
             _lexer = new Lexer(_input);
             _tokens = new List<Token>
             {
-                new(TokenType.LET, "let"),
+                new(TokenType.LET, "låt"),
                 new(TokenType.IDENT, "five"),
-                new(TokenType.ASSIGN, "="),
+                new(TokenType.ASSIGN, "vara"),
                 new(TokenType.INT, "5"),
                 new(TokenType.SEMICOLON, ";"),
-                new(TokenType.LET, "let"),
+                new(TokenType.LET, "låt"),
                 new(TokenType.IDENT, "ten"),
-                new(TokenType.ASSIGN, "="),
+                new(TokenType.ASSIGN, "vara"),
                 new(TokenType.INT, "10"),
                 new(TokenType.SEMICOLON, ";"),
-                new(TokenType.LET, "let"),
+                new(TokenType.LET, "låt"),
                 new(TokenType.IDENT, "add"),
-                new(TokenType.ASSIGN, "="),
+                new(TokenType.ASSIGN, "vara"),
                 new(TokenType.FUNCTION, "fn"),
                 new(TokenType.LPAREN, "("),
                 new(TokenType.IDENT, "x"),
@@ -55,9 +56,9 @@ namespace Sharklang.Tests
                 new(TokenType.SEMICOLON, ";"),
                 new(TokenType.RBRACE, "}"),
                 new(TokenType.SEMICOLON, ";"),
-                new(TokenType.LET, "let"),
+                new(TokenType.LET, "låt"),
                 new(TokenType.IDENT, "result"),
-                new(TokenType.ASSIGN, "="),
+                new(TokenType.ASSIGN, "vara"),
                 new(TokenType.IDENT, "add"),
                 new(TokenType.LPAREN, "("),
                 new(TokenType.IDENT, "five"),
@@ -74,6 +75,7 @@ namespace Sharklang.Tests
             foreach (var expected in _tokens)
             {
                 var token = _lexer.NextToken();
+                Console.WriteLine($"Expected: {expected}, Actual: {token}");
                 Assert.That(expected, Is.EqualTo(token));
             }
         }

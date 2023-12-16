@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,7 +32,7 @@ namespace Sharklang.Core
 
     public record Token(TokenType tokenType, string literal)
     {
-        public Token(TokenType type, char literal) : this(type, literal.ToString())
+        public Token(TokenType type, Rune literal) : this(type, literal.ToString())
         {
 
         }
@@ -45,12 +46,12 @@ namespace Sharklang.Core
 
         private int _readPosition;
 
-        private char _ch;
+        private Rune _ch;
 
         private readonly Dictionary<string, TokenType> _keywords = new()
         {
             { "fn", TokenType.FUNCTION },
-            { "let", TokenType.LET }
+            { "låt", TokenType.LET }
         };
 
         public Lexer(string input)
@@ -61,17 +62,17 @@ namespace Sharklang.Core
 
         private void ReadChar()
         {
-            if(_readPosition >= _input.Length)
+            if (_readPosition >= _input.Length)
             {
-                _ch = '\0';
+                _ch = Rune.ReplacementChar; // End of file or invalid character
             }
             else
             {
-                _ch = _input[_readPosition];
+                _ch = Rune.GetRuneAt(_input, _readPosition);
             }
 
-            _position = _readPosition;
-            _readPosition++;
+            _position = _readPosition; // Current reading position
+            _readPosition += (_ch == Rune.ReplacementChar) ? 0 : _ch.Utf16SequenceLength;
         }
 
         public Token NextToken()
@@ -82,31 +83,32 @@ namespace Sharklang.Core
 
             switch(_ch)
             {
-                case '=':
-                    tok = new Token(TokenType.ASSIGN, _ch);
+                case var ch when ch == new Rune('v'):
+                    tok = TryReadAssignOrIdent();
+                    //tok = new Token(TokenType.ASSIGN, _ch.ToString());
                     break;
-                case ';':
-                    tok = new Token(TokenType.SEMICOLON, _ch);
+                case var ch when ch == new Rune(';'):
+                    tok = new Token(TokenType.SEMICOLON, _ch.ToString());
                     break;
-                case '(':
-                    tok = new Token(TokenType.LPAREN, _ch);
+                case var ch when ch == new Rune('('):
+                    tok = new Token(TokenType.LPAREN, _ch.ToString());
                     break;
-                case ')':
-                    tok = new Token(TokenType.RPAREN, _ch);
+                case var ch when ch == new Rune(')'):
+                    tok = new Token(TokenType.RPAREN, _ch.ToString());
                     break;
-                case ',':
-                    tok = new Token(TokenType.COMMA, _ch);
+                case var ch when ch == new Rune(','):
+                    tok = new Token(TokenType.COMMA, _ch.ToString());
                     break;
-                case '+':
-                    tok = new Token(TokenType.PLUS, _ch);
+                case var ch when ch == new Rune('+'):
+                    tok = new Token(TokenType.PLUS, _ch.ToString());
                     break;
-                case '{':
-                    tok = new Token(TokenType.LBRACE, _ch);
+                case var ch when ch == new Rune('{'):
+                    tok = new Token(TokenType.LBRACE, _ch.ToString());
                     break;
-                case '}':
-                    tok = new Token(TokenType.RBRACE, _ch);
+                case var ch when ch == new Rune('}'):
+                    tok = new Token(TokenType.RBRACE, _ch.ToString());
                     break;
-                case '\0':
+                case var ch when ch == Rune.ReplacementChar:
                     tok = new Token(TokenType.EOF, "");
                     break;
                 default:
@@ -114,18 +116,17 @@ namespace Sharklang.Core
                     {
                         var ident = ReadIdentifier();
                         var type = LookupIdent(ident);
-                        tok = new Token(type, ident);
-                        return tok;
+                        return new Token(type, ident);
                     }
-                    if (IsDigit(_ch))
+                    else if (IsDigit(_ch))
                     {
                         var literal = ReadNumber();
-                        tok = new Token(TokenType.INT, literal);
-                        return tok;
-
+                        return new Token(TokenType.INT, literal);
                     }
-
-                    tok = new Token(TokenType.Illegal, _ch);
+                    else
+                    {
+                        tok = new Token(TokenType.Illegal, _ch.ToString());
+                    }
                     break;
             }
 
@@ -165,15 +166,38 @@ namespace Sharklang.Core
             return _input.Substring(position, _position - position);
         }
 
-        private static bool IsLetter(char ch) => ch is >= 'a' and <= 'z' or >= 'A' and <= 'Z' or '_';
-        private static bool IsDigit(char ch) => ch is >= '0' and <= '9';
-
-        private void SkipWhiteSpace()
+        private static bool IsLetter(Rune ch)
         {
-            while (_ch is ' ' or '\t' or '\n' or '\r')
+            var category = CharUnicodeInfo.GetUnicodeCategory(ch.Value);
+            return category == UnicodeCategory.LowercaseLetter ||
+                   category == UnicodeCategory.UppercaseLetter ||
+                   ch == new Rune('_');
+        }
+        private static bool IsDigit(Rune ch)
+        {
+            var category = CharUnicodeInfo.GetUnicodeCategory(ch.Value);
+            return category == UnicodeCategory.DecimalDigitNumber;
+        }
+
+        private Token TryReadAssignOrIdent()
+        {
+            var ident = ReadIdentifier();
+            if (ident == "vara")
             {
-                ReadChar();
+                return new Token(TokenType.ASSIGN, ident);
+            }
+            else
+            {
+                return new Token(LookupIdent(ident), ident);
             }
         }
+
+        private void SkipWhiteSpace()
+{
+    while (_ch != Rune.ReplacementChar && Char.IsWhiteSpace((char)_ch.Value))
+    {
+        ReadChar();
+    }
+}
     }
 }
