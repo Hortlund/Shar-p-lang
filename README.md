@@ -2,7 +2,7 @@
 
 Writing an interpreter with help from the book: https://interpreterbook.com/
 
-## NEW!
+## NEW! 
 Svensk syntax!
 
             låt five vara 5;
