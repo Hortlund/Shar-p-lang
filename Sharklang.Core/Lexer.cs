@@ -51,7 +51,8 @@ namespace Sharklang.Core
         private readonly Dictionary<string, TokenType> _keywords = new()
         {
             { "fn", TokenType.FUNCTION },
-            { "låt", TokenType.LET }
+            { "låt", TokenType.LET },
+            { "vara", TokenType.ASSIGN }
         };
 
         public Lexer(string input)
@@ -83,10 +84,6 @@ namespace Sharklang.Core
 
             switch(_ch)
             {
-                case var ch when ch == new Rune('v'):
-                    tok = TryReadAssignOrIdent();
-                    //tok = new Token(TokenType.ASSIGN, _ch.ToString());
-                    break;
                 case var ch when ch == new Rune(';'):
                     tok = new Token(TokenType.SEMICOLON, _ch.ToString());
                     break;
@@ -177,19 +174,6 @@ namespace Sharklang.Core
         {
             var category = CharUnicodeInfo.GetUnicodeCategory(ch.Value);
             return category == UnicodeCategory.DecimalDigitNumber;
-        }
-
-        private Token TryReadAssignOrIdent()
-        {
-            var ident = ReadIdentifier();
-            if (ident == "vara")
-            {
-                return new Token(TokenType.ASSIGN, ident);
-            }
-            else
-            {
-                return new Token(LookupIdent(ident), ident);
-            }
         }
 
         private void SkipWhiteSpace()

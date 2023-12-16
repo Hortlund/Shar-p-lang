@@ -75,7 +75,6 @@ namespace Sharklang.Tests
             foreach (var expected in _tokens)
             {
                 var token = _lexer.NextToken();
-                Console.WriteLine($"Expected: {expected}, Actual: {token}");
                 Assert.That(expected, Is.EqualTo(token));
             }
         }
