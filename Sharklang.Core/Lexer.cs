@@ -17,6 +17,16 @@ namespace Sharklang.Core
 
         ASSIGN,
         PLUS,
+        MINUS,
+        BANG,
+        ASTERISK,
+        SLASH,
+
+        LT,
+        GT,
+
+        EQ,
+        NOT_EQ,
 
         COMMA,
         SEMICOLON,
@@ -27,7 +37,12 @@ namespace Sharklang.Core
         RBRACE,
 
         FUNCTION,
-        LET
+        LET,
+        TRUE,
+        FALSE,
+        IF,
+        ELSE,
+        RETURN
     }
 
     public record Token(TokenType tokenType, string literal)
@@ -52,7 +67,14 @@ namespace Sharklang.Core
         {
             { "fn", TokenType.FUNCTION },
             { "låt", TokenType.LET },
-            { "vara", TokenType.ASSIGN }
+            { "vara", TokenType.ASSIGN },
+            { "sant", TokenType.TRUE },
+            { "falskt", TokenType.FALSE },
+            { "om", TokenType.IF },
+            { "annars", TokenType.ELSE },
+            { "ge", TokenType.RETURN },
+            { "lika", TokenType.EQ },
+            { "olika", TokenType.NOT_EQ }
         };
 
         public Lexer(string input)
@@ -84,6 +106,27 @@ namespace Sharklang.Core
 
             switch(_ch)
             {
+                case var ch when ch == new Rune('+'):
+                    tok = new Token(TokenType.PLUS, _ch.ToString());
+                    break;
+                case var ch when ch == new Rune('-'):
+                    tok = new Token(TokenType.MINUS, _ch.ToString());
+                    break;
+                case var ch when ch == new Rune('!'):
+                    tok = new Token(TokenType.BANG, _ch.ToString());
+                    break;
+                case var ch when ch == new Rune('/'):
+                    tok = new Token(TokenType.SLASH, _ch.ToString());
+                    break;
+                case var ch when ch == new Rune('*'):
+                    tok = new Token(TokenType.ASTERISK, _ch.ToString());
+                    break;
+                case var ch when ch == new Rune('<'):
+                    tok = new Token(TokenType.LT, _ch.ToString());
+                    break;
+                case var ch when ch == new Rune('>'):
+                    tok = new Token(TokenType.GT, _ch.ToString());
+                    break;
                 case var ch when ch == new Rune(';'):
                     tok = new Token(TokenType.SEMICOLON, _ch.ToString());
                     break;
@@ -133,14 +176,7 @@ namespace Sharklang.Core
 
         private TokenType LookupIdent(string ident)
         {
-            if (_keywords.ContainsKey(ident))
-            {
-                return _keywords[ident];
-            }
-            else
-            {
-                return TokenType.IDENT;
-            }
+            return _keywords.TryGetValue(ident, out TokenType tokenType) ? tokenType : TokenType.IDENT;
         }
 
         private string ReadIdentifier()
@@ -163,6 +199,20 @@ namespace Sharklang.Core
             return _input.Substring(position, _position - position);
         }
 
+        //Implemented for future use maybe? Dont know if it works with runes.
+        //for ex +=, -=
+        private Rune PeekRune()
+        {
+            if (_readPosition >= _input.Length)
+            {
+                return Rune.ReplacementChar;
+            }
+            else
+            {
+                return new Rune(_input[_readPosition]);
+            }
+        }
+
         private static bool IsLetter(Rune ch)
         {
             var category = CharUnicodeInfo.GetUnicodeCategory(ch.Value);
@@ -170,6 +220,7 @@ namespace Sharklang.Core
                    category == UnicodeCategory.UppercaseLetter ||
                    ch == new Rune('_');
         }
+
         private static bool IsDigit(Rune ch)
         {
             var category = CharUnicodeInfo.GetUnicodeCategory(ch.Value);
@@ -177,11 +228,11 @@ namespace Sharklang.Core
         }
 
         private void SkipWhiteSpace()
-{
-    while (_ch != Rune.ReplacementChar && Char.IsWhiteSpace((char)_ch.Value))
-    {
-        ReadChar();
-    }
-}
+        {
+            while (_ch != Rune.ReplacementChar && Char.IsWhiteSpace((char)_ch.Value))
+            {
+                ReadChar();
+            }
+        }
     }
 }
