@@ -27,6 +27,7 @@ namespace Sharklang.Core
 
         EQ,
         NOT_EQ,
+        PLUS_EQ,
 
         COMMA,
         SEMICOLON,
@@ -107,7 +108,17 @@ namespace Sharklang.Core
             switch(_ch)
             {
                 case var ch when ch == new Rune('+'):
-                    tok = new Token(TokenType.PLUS, _ch.ToString());
+                    if(PeekRune() == new Rune('='))
+                    {
+                        var chh = _ch;
+                        ReadChar();
+                        var literal = chh.ToString() + _ch.ToString();
+                        tok = new Token(TokenType.PLUS_EQ, literal);
+                    }
+                    else
+                    {
+                        tok = new Token(TokenType.PLUS, _ch.ToString());
+                    }
                     break;
                 case var ch when ch == new Rune('-'):
                     tok = new Token(TokenType.MINUS, _ch.ToString());

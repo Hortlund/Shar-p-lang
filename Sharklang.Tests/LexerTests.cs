@@ -15,7 +15,6 @@ namespace Sharklang.Tests
         {
 
             _input = @"
-
             låt five vara 5;
             låt ten vara 10;
 
@@ -35,6 +34,7 @@ namespace Sharklang.Tests
 
             10 lika 10;
             10 olika 9;
+            10 += 9;
             ";
 
             _lexer = new Lexer(_input);
@@ -112,8 +112,11 @@ namespace Sharklang.Tests
                 new(TokenType.INT, "10"),
                 new(TokenType.NOT_EQ, "olika"),
                 new(TokenType.INT, "9"),
+                new(TokenType.SEMICOLON, ";"),
+                new(TokenType.INT, "10"),
+                new(TokenType.PLUS_EQ, "+="),
+                new(TokenType.INT, "9"),
                 new(TokenType.SEMICOLON, ";")
-
             };
         }
 
