@@ -1,4 +1,5 @@
 ﻿using Sharklang.Core;
+using System.Text;
 
 namespace Sharklang.CLI;
 
@@ -29,6 +30,11 @@ internal static class Program
     ";
     private static void Main(string[] args)
     {
+
+        Console.InputEncoding = Encoding.UTF8;
+        Console.OutputEncoding = Encoding.UTF8;
+
+
         const string prompt = ">> ";
         Console.Write(welcome);
         Console.WriteLine(fish);
